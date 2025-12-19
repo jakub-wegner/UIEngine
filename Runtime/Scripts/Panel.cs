@@ -4,25 +4,51 @@ namespace JakubWegner.UIEngine {
     [ExecuteAlways]
     [RequireComponent(typeof(RectTransform), typeof(Image))]
     public class Panel : MonoBehaviour {
+        // shader
+
+        private static Shader panelShader;
+        private static Shader PanelShader {
+            get {
+                if (!panelShader)
+                    panelShader = Shader.Find("JakubWegner/UIEngine/Panel");
+                return panelShader;
+            }
+        }
+
+        // property ids
+
+        private static readonly int FillColorID = Shader.PropertyToID("_FillColor");
+        private static readonly int CornerRadiusID = Shader.PropertyToID("_CornerRadius");
+
+        private static readonly int EnableBorderID = Shader.PropertyToID("_EnableBorder");
+        private static readonly int BorderColorID = Shader.PropertyToID("_BorderColor");
+        private static readonly int BorderSizeID = Shader.PropertyToID("_BorderSize");
+
+        private static readonly int EnableShadowID = Shader.PropertyToID("_EnableShadow");
+        private static readonly int ShadowColorID = Shader.PropertyToID("_ShadowColor");
+        private static readonly int ShadowOffsetID = Shader.PropertyToID("_ShadowOffset");
+
+        private static readonly int SizeID = Shader.PropertyToID("_Size");
+        private static readonly int RectSizeID = Shader.PropertyToID("_RectSize");
+
+        // runtime state
+
         private bool initialized = false;
 
         private RectTransform rectTF;
         private Image image;
-
         private Material material;
 
-        // fill
+        // serialized properties
+
         [SerializeField] private Color fillColor = Color.white;
 
-        // corners
         [SerializeField] private float cornerRadius = 20f;
 
-        // border
         [SerializeField] private bool enableBorder = false;
         [SerializeField] private Color borderColor = Color.black;
         [SerializeField] private float borderSize = 5f;
 
-        // shadow
         [SerializeField] private bool enableShadow = false;
         [SerializeField] private Color shadowColor = new Color(0f, 0f, 0f, .75f);
         [SerializeField] private Vector2 shadowOffset = Vector2.one * 5f; 
@@ -33,8 +59,8 @@ namespace JakubWegner.UIEngine {
         private void OnValidate() {
             UpdateMaterial();
         }
+
         private void Initialize() {
-            Debug.Log("Initialize");
             initialized = true;
 
             rectTF = GetComponent<RectTransform>();
@@ -43,43 +69,43 @@ namespace JakubWegner.UIEngine {
             CreateMaterial();
         }
         private void CreateMaterial() {
-            Debug.Log("Create material");
-            material = new Material(Shader.Find("JakubWegner/UIEngine/Panel"));
+            material = new Material(PanelShader);
+            material.hideFlags = HideFlags.HideAndDontSave;
             image.material = material;
         }
+
         public void UpdateMaterial() {
             if (!initialized)
                 Initialize();
-            Debug.Log("Update material");
-            if (!material || material.shader != Shader.Find("JakubWegner/UIEngine/Panel"))
+            if (!material || material.shader != PanelShader)
                 CreateMaterial();
 
             // fill
-            material.SetColor("_FillColor", fillColor);
+            material.SetColor(FillColorID, fillColor);
 
             // corners
-            material.SetFloat("_CornerRadius", cornerRadius);
+            material.SetFloat(CornerRadiusID, cornerRadius);
 
             // border
-            material.SetFloat("_EnableBorder", enableBorder ? 1f : 0f);
+            material.SetFloat(EnableBorderID, enableBorder ? 1f : 0f);
             if (enableBorder) {
-                material.SetColor("_BorderColor", borderColor);
-                material.SetFloat("_BorderSize", borderSize);
+                material.SetColor(BorderColorID, borderColor);
+                material.SetFloat(BorderSizeID, borderSize);
             }
 
             // shadow
             float rectOffset = 0f;
-            material.SetFloat("_EnableShadow", enableShadow ? 1f : 0f);
+            material.SetFloat(EnableShadowID, enableShadow ? 1f : 0f);
             if (enableShadow) {
                 rectOffset = Mathf.Max(Mathf.Abs(shadowOffset.x), Mathf.Abs(shadowOffset.y));
-                material.SetColor("_ShadowColor", shadowColor);
-                material.SetVector("_ShadowOffset", new Vector4(shadowOffset.x, shadowOffset.y));
+                material.SetColor(ShadowColorID, shadowColor);
+                material.SetVector(ShadowOffsetID, new Vector4(shadowOffset.x, shadowOffset.y));
             }
 
             // size
             image.UpdateMesh(rectOffset);
-            material.SetVector("_Size", new Vector4(rectTF.rect.width, rectTF.rect.height, 0f, 0f));
-            material.SetVector("_RectSize", new Vector4(rectTF.rect.width + rectOffset * 2f, rectTF.rect.height + rectOffset * 2f, 0f, 0f));
+            material.SetVector(SizeID, new Vector4(rectTF.rect.width, rectTF.rect.height, 0f, 0f));
+            material.SetVector(RectSizeID, new Vector4(rectTF.rect.width + rectOffset * 2f, rectTF.rect.height + rectOffset * 2f, 0f, 0f));
         }
     }
 

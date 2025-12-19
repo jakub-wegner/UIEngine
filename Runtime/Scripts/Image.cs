@@ -10,7 +10,6 @@ namespace JakubWegner.UIEngine {
         }
         protected override void OnPopulateMesh(VertexHelper toFill) {
             base.OnPopulateMesh(toFill);
-            Debug.Log("on populate mesh");
             UIVertex v = new UIVertex();
             for (int i = 0; i < 4; i++) {
                 toFill.PopulateUIVertex(ref v, i);
