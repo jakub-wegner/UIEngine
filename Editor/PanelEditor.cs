@@ -5,10 +5,10 @@ namespace JakubWegner.UIEngine {
 
     [CustomEditor(typeof(Panel))]
     public class PanelInspector : Editor {
-        private SerializedProperty panelStyle;
+
+        private SerializedProperty state;
 
         private SerializedProperty fillColor;
-
         private SerializedProperty cornerRadius;
 
         private SerializedProperty enableBorder;
@@ -20,59 +20,64 @@ namespace JakubWegner.UIEngine {
         private SerializedProperty shadowOffset;
 
         private void OnEnable() {
-            panelStyle = serializedObject.FindProperty(nameof(panelStyle));
+            state = serializedObject.FindProperty("state");
 
-            fillColor = serializedObject.FindProperty(nameof(fillColor));
+            fillColor = state.FindPropertyRelative("fillColor");
+            cornerRadius = state.FindPropertyRelative("cornerRadius");
 
-            cornerRadius = serializedObject.FindProperty(nameof(cornerRadius));
+            enableBorder = state.FindPropertyRelative("enableBorder");
+            borderColor = state.FindPropertyRelative("borderColor");
+            borderSize = state.FindPropertyRelative("borderSize");
 
-            enableBorder = serializedObject.FindProperty(nameof(enableBorder));
-            borderColor = serializedObject.FindProperty(nameof(borderColor));
-            borderSize = serializedObject.FindProperty(nameof(borderSize));
-
-            enableShadow = serializedObject.FindProperty(nameof(enableShadow));
-            shadowColor = serializedObject.FindProperty(nameof(shadowColor));
-            shadowOffset = serializedObject.FindProperty(nameof(shadowOffset));
+            enableShadow = state.FindPropertyRelative("enableShadow");
+            shadowColor = state.FindPropertyRelative("shadowColor");
+            shadowOffset = state.FindPropertyRelative("shadowOffset");
         }
 
         public override void OnInspectorGUI() {
             serializedObject.Update();
 
-            // fill
+            // Fill
             EditorGUILayout.LabelField("Fill", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(fillColor, new GUIContent("Fill color"));
+            EditorGUILayout.PropertyField(fillColor, new GUIContent("Fill Color"));
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(8);
 
-            // corners
+            // Corners
             EditorGUILayout.LabelField("Corners", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            cornerRadius.floatValue = Mathf.Max(EditorGUILayout.FloatField("Radius", cornerRadius.floatValue), 0f);
+            cornerRadius.floatValue = Mathf.Max(
+                EditorGUILayout.FloatField("Radius", cornerRadius.floatValue),
+                0f
+            );
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(8);
 
-            // border
+            // Border
             EditorGUILayout.LabelField("Border", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(enableBorder, new GUIContent("Enable border"));
+            EditorGUILayout.PropertyField(enableBorder, new GUIContent("Enable Border"));
             if (enableBorder.boolValue) {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(borderColor, new GUIContent("Border color"));
-                borderSize.floatValue = Mathf.Max(EditorGUILayout.FloatField("Border size", borderSize.floatValue), 0f);
+                EditorGUILayout.PropertyField(borderColor, new GUIContent("Border Color"));
+                borderSize.floatValue = Mathf.Max(
+                    EditorGUILayout.FloatField("Border Size", borderSize.floatValue),
+                    0f
+                );
                 EditorGUI.indentLevel--;
             }
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(8);
 
-            // shadow
+            // Shadow
             EditorGUILayout.LabelField("Shadow", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
-            EditorGUILayout.PropertyField(enableShadow, new GUIContent("Enable shadow"));
+            EditorGUILayout.PropertyField(enableShadow, new GUIContent("Enable Shadow"));
             if (enableShadow.boolValue) {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(shadowColor, new GUIContent("Shadow color"));
-                EditorGUILayout.PropertyField(shadowOffset, new GUIContent("Shadow offset"));
+                EditorGUILayout.PropertyField(shadowColor, new GUIContent("Shadow Color"));
+                EditorGUILayout.PropertyField(shadowOffset, new GUIContent("Shadow Offset"));
                 EditorGUI.indentLevel--;
             }
             EditorGUI.indentLevel--;

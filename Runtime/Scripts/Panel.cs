@@ -4,8 +4,6 @@ namespace JakubWegner.UIEngine {
     [ExecuteAlways]
     [RequireComponent(typeof(RectTransform), typeof(Image))]
     public class Panel : MonoBehaviour {
-        // shader
-
         private static Shader panelShader;
         private static Shader PanelShader {
             get {
@@ -15,9 +13,8 @@ namespace JakubWegner.UIEngine {
             }
         }
 
-        // property ids
-
         private static readonly int FillColorID = Shader.PropertyToID("_FillColor");
+
         private static readonly int CornerRadiusID = Shader.PropertyToID("_CornerRadius");
 
         private static readonly int EnableBorderID = Shader.PropertyToID("_EnableBorder");
@@ -31,32 +28,34 @@ namespace JakubWegner.UIEngine {
         private static readonly int SizeID = Shader.PropertyToID("_Size");
         private static readonly int RectSizeID = Shader.PropertyToID("_RectSize");
 
-        // runtime state
-
         private bool initialized = false;
 
         private RectTransform rectTF;
         private Image image;
         private Material material;
 
-        // serialized properties
-
-        [SerializeField] private Color fillColor = Color.white;
-
-        [SerializeField] private float cornerRadius = 20f;
-
-        [SerializeField] private bool enableBorder = false;
-        [SerializeField] private Color borderColor = Color.black;
-        [SerializeField] private float borderSize = 5f;
-
-        [SerializeField] private bool enableShadow = false;
-        [SerializeField] private Color shadowColor = new Color(0f, 0f, 0f, .75f);
-        [SerializeField] private Vector2 shadowOffset = Vector2.one * 5f; 
+        [SerializeField] private PanelVisualState state;
 
         private void OnRectTransformDimensionsChange() {
             UpdateMaterial();
         }
         private void OnValidate() {
+            UpdateMaterial();
+        }
+
+        private void Reset() {
+            state.fillColor = Color.white;
+
+            state.cornerRadius = 20f;
+
+            state.enableBorder = false;
+            state.borderColor = Color.black;
+            state.borderSize = 5f;
+
+            state.enableShadow = false;
+            state.shadowColor = Color.black;
+            state.shadowOffset = new Vector2(5f, -5f);
+
             UpdateMaterial();
         }
 
@@ -81,25 +80,25 @@ namespace JakubWegner.UIEngine {
                 CreateMaterial();
 
             // fill
-            material.SetColor(FillColorID, fillColor);
+            material.SetColor(FillColorID, state.fillColor);
 
             // corners
-            material.SetFloat(CornerRadiusID, cornerRadius);
+            material.SetFloat(CornerRadiusID, state.cornerRadius);
 
             // border
-            material.SetFloat(EnableBorderID, enableBorder ? 1f : 0f);
-            if (enableBorder) {
-                material.SetColor(BorderColorID, borderColor);
-                material.SetFloat(BorderSizeID, borderSize);
+            material.SetFloat(EnableBorderID, state.enableBorder ? 1f : 0f);
+            if (state.enableBorder) {
+                material.SetColor(BorderColorID, state.borderColor);
+                material.SetFloat(BorderSizeID, state.borderSize);
             }
 
             // shadow
             float rectOffset = 0f;
-            material.SetFloat(EnableShadowID, enableShadow ? 1f : 0f);
-            if (enableShadow) {
-                rectOffset = Mathf.Max(Mathf.Abs(shadowOffset.x), Mathf.Abs(shadowOffset.y));
-                material.SetColor(ShadowColorID, shadowColor);
-                material.SetVector(ShadowOffsetID, new Vector4(shadowOffset.x, shadowOffset.y));
+            material.SetFloat(EnableShadowID, state.enableShadow ? 1f : 0f);
+            if (state.enableShadow) {
+                rectOffset = Mathf.Max(Mathf.Abs(state.shadowOffset.x), Mathf.Abs(state.shadowOffset.y));
+                material.SetColor(ShadowColorID, state.shadowColor);
+                material.SetVector(ShadowOffsetID, new Vector4(state.shadowOffset.x, state.shadowOffset.y));
             }
 
             // size
