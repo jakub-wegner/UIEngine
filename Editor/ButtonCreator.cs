@@ -3,11 +3,11 @@ namespace JakubWegner.UIEngine {
     using UnityEngine;
     using UnityEngine.UI;
 
-    public static class PanelCreator {
-        [MenuItem("GameObject/UIEngine/Panel", false, 0)]
+    public static class ButtonCreator {
+        [MenuItem("GameObject/UIEngine/Button", false, 0)]
         public static void CreatePanel() {
             // create gameobject
-            GameObject go = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Panel));
+            GameObject go = new GameObject("Button", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
 
             // parent
             GameObject parent = Selection.activeGameObject;

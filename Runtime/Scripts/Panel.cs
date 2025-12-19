@@ -34,7 +34,22 @@ namespace JakubWegner.UIEngine {
         private Image image;
         private Material material;
 
-        [SerializeField] private PanelVisualState state;
+        [SerializeField] protected PanelVisualState state;
+
+        private void Reset() {
+            state.fillColor = new Color(0.14f, 0.15f, 0.18f, 1f);
+            state.cornerRadius = 16f;
+
+            state.enableBorder = true;
+            state.borderSize = 1.2f;
+            state.borderColor = new Color(0.45f, 0.55f, 1f, 0.25f);
+
+            state.enableShadow = true;
+            state.shadowColor = new Color(0f, 0f, 0f, 0.45f);
+            state.shadowOffset = new Vector2(0f, -8f);
+
+            UpdateMaterial();
+        }
 
         private void OnRectTransformDimensionsChange() {
             UpdateMaterial();
@@ -42,20 +57,7 @@ namespace JakubWegner.UIEngine {
         private void OnValidate() {
             UpdateMaterial();
         }
-
-        private void Reset() {
-            state.fillColor = Color.white;
-
-            state.cornerRadius = 20f;
-
-            state.enableBorder = false;
-            state.borderColor = Color.black;
-            state.borderSize = 5f;
-
-            state.enableShadow = false;
-            state.shadowColor = Color.black;
-            state.shadowOffset = new Vector2(5f, -5f);
-
+        private void Start() {
             UpdateMaterial();
         }
 
@@ -73,7 +75,7 @@ namespace JakubWegner.UIEngine {
             image.material = material;
         }
 
-        public void UpdateMaterial() {
+        protected void UpdateMaterial() {
             if (!initialized)
                 Initialize();
             if (!material || material.shader != PanelShader)

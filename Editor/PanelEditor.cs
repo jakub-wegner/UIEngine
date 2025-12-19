@@ -1,50 +1,43 @@
 namespace JakubWegner.UIEngine {
-
     using UnityEditor;
     using UnityEngine;
 
     [CustomEditor(typeof(Panel))]
     public class PanelInspector : Editor {
-
-        private SerializedProperty state;
-
-        private SerializedProperty fillColor;
-        private SerializedProperty cornerRadius;
-
-        private SerializedProperty enableBorder;
-        private SerializedProperty borderColor;
-        private SerializedProperty borderSize;
-
-        private SerializedProperty enableShadow;
-        private SerializedProperty shadowColor;
-        private SerializedProperty shadowOffset;
-
-        private void OnEnable() {
-            state = serializedObject.FindProperty("state");
-
-            fillColor = state.FindPropertyRelative("fillColor");
-            cornerRadius = state.FindPropertyRelative("cornerRadius");
-
-            enableBorder = state.FindPropertyRelative("enableBorder");
-            borderColor = state.FindPropertyRelative("borderColor");
-            borderSize = state.FindPropertyRelative("borderSize");
-
-            enableShadow = state.FindPropertyRelative("enableShadow");
-            shadowColor = state.FindPropertyRelative("shadowColor");
-            shadowOffset = state.FindPropertyRelative("shadowOffset");
-        }
-
         public override void OnInspectorGUI() {
             serializedObject.Update();
 
-            // Fill
+            DrawState(serializedObject.FindProperty("state"), "Panel");
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        protected void DrawState(SerializedProperty state, string label) {
+            // serialized properties
+            SerializedProperty fillColor = state.FindPropertyRelative("fillColor");
+            SerializedProperty cornerRadius = state.FindPropertyRelative("cornerRadius");
+
+            SerializedProperty enableBorder = state.FindPropertyRelative("enableBorder");
+            SerializedProperty borderColor = state.FindPropertyRelative("borderColor");
+            SerializedProperty borderSize = state.FindPropertyRelative("borderSize");
+
+            SerializedProperty enableShadow = state.FindPropertyRelative("enableShadow");
+            SerializedProperty shadowColor = state.FindPropertyRelative("shadowColor");
+            SerializedProperty shadowOffset = state.FindPropertyRelative("shadowOffset");
+
+            // label
+            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
+            // fill
             EditorGUILayout.LabelField("Fill", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(fillColor, new GUIContent("Fill Color"));
             EditorGUI.indentLevel--;
-            EditorGUILayout.Space(8);
+            EditorGUILayout.Space(4);
 
-            // Corners
+            // corners
             EditorGUILayout.LabelField("Corners", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             cornerRadius.floatValue = Mathf.Max(
@@ -52,9 +45,9 @@ namespace JakubWegner.UIEngine {
                 0f
             );
             EditorGUI.indentLevel--;
-            EditorGUILayout.Space(8);
+            EditorGUILayout.Space(4);
 
-            // Border
+            // border
             EditorGUILayout.LabelField("Border", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(enableBorder, new GUIContent("Enable Border"));
@@ -68,9 +61,9 @@ namespace JakubWegner.UIEngine {
                 EditorGUI.indentLevel--;
             }
             EditorGUI.indentLevel--;
-            EditorGUILayout.Space(8);
+            EditorGUILayout.Space(4);
 
-            // Shadow
+            // shadow
             EditorGUILayout.LabelField("Shadow", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(enableShadow, new GUIContent("Enable Shadow"));
@@ -81,9 +74,9 @@ namespace JakubWegner.UIEngine {
                 EditorGUI.indentLevel--;
             }
             EditorGUI.indentLevel--;
-            EditorGUILayout.Space(8);
+            EditorGUILayout.Space(4);
 
-            serializedObject.ApplyModifiedProperties();
+            EditorGUILayout.EndVertical();
         }
     }
 }
