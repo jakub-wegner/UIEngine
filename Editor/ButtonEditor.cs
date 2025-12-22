@@ -8,11 +8,12 @@ namespace JakubWegner.UIEngine {
         public override void OnInspectorGUI() {
             serializedObject.Update();
 
-            // events
-            EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("onClick"));
+            SerializedProperty isActive = serializedObject.FindProperty("isActive");
+            SerializedProperty onClick = serializedObject.FindProperty("onClick");
 
-            EditorGUILayout.Space(8);
+            EditorGUILayout.PropertyField(isActive, new GUIContent("Is Active"));
+            EditorGUILayout.Space(4);
+            EditorGUILayout.PropertyField(onClick);
 
             // states
             DrawState(serializedObject.FindProperty("idleState"), "Idle");
@@ -20,6 +21,8 @@ namespace JakubWegner.UIEngine {
             DrawState(serializedObject.FindProperty("hoveredState"), "Hovered");
             EditorGUILayout.Space(8);
             DrawState(serializedObject.FindProperty("pressedState"), "Pressed");
+            EditorGUILayout.Space(8);
+            DrawState(serializedObject.FindProperty("inactiveState"), "Inactive");
 
             serializedObject.ApplyModifiedProperties();
         }

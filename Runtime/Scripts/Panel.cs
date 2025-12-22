@@ -58,10 +58,11 @@ namespace JakubWegner.UIEngine {
             UpdateMaterial();
         }
         private void Start() {
+            initialized = false;
             UpdateMaterial();
         }
 
-        private void Initialize() {
+        protected void Initialize() {
             initialized = true;
 
             rectTF = GetComponent<RectTransform>();

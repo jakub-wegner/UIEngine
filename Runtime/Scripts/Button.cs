@@ -7,8 +7,10 @@ namespace JakubWegner.UIEngine {
         [SerializeField] private PanelVisualState idleState;
         [SerializeField] private PanelVisualState hoveredState;
         [SerializeField] private PanelVisualState pressedState;
+        [SerializeField] private PanelVisualState inactiveState;
 
         public UnityEvent onClick;
+        public bool isActive;
 
         private bool isHovered;
         private bool isPressed;
@@ -52,13 +54,30 @@ namespace JakubWegner.UIEngine {
             pressedState.shadowColor = new Color(0f, 0f, 0f, 0.30f);
             pressedState.shadowOffset = new Vector2(0f, -2f);
 
+            // inactive
+            inactiveState.fillColor = new Color(0.13f, 0.14f, 0.18f);
+            inactiveState.cornerRadius = 18f;
+
+            inactiveState.enableBorder = true;
+            inactiveState.borderSize = 1.4f;
+            inactiveState.borderColor = accent * new Color(1f, 1f, 1f, 0.65f);
+
+            inactiveState.enableShadow = true;
+            inactiveState.shadowColor = new Color(0f, 0f, 0f, 0.30f);
+            inactiveState.shadowOffset = new Vector2(0f, -2f);
+
+            isHovered = false;
+            isPressed = false;
+            isActive = true;
+
             SetState(idleState);
         }
         private void OnEnable() {
-            SetState(idleState);
+            SetState(isActive ? idleState : inactiveState);
+            UpdateMaterial();
         }
         private void OnValidate() {
-            SetState(idleState);
+            UpdateMaterial();
         }
 
         private void SetState(PanelVisualState state) {
@@ -68,28 +87,39 @@ namespace JakubWegner.UIEngine {
 
         public void OnPointerEnter(PointerEventData eventData) {
             isHovered = true;
-            if (!isPressed)
+            if (isActive && !isPressed)
                 SetState(hoveredState);
         }
 
         public void OnPointerExit(PointerEventData eventData) {
             isHovered = false;
-            if (!isPressed)
+            if (isActive && !isPressed)
                 SetState(idleState);
         }
 
         public void OnPointerDown(PointerEventData eventData) {
             isPressed = true;
-            SetState(pressedState);
+            if (isActive)
+                SetState(pressedState);
         }
 
         public void OnPointerUp(PointerEventData eventData) {
             isPressed = false;
-            SetState(isHovered ? hoveredState : idleState);
+            if (isActive)
+                SetState(isHovered ? hoveredState : idleState);
         }
 
         public void OnPointerClick(PointerEventData eventData) {
-            onClick.Invoke();
+            if (isActive)
+                onClick.Invoke();
+        }
+
+        public void SetActive(bool active) {
+            isActive = active;
+            if (active)
+                SetState(isPressed ? pressedState : isHovered ? hoveredState : idleState);
+            else
+                SetState(inactiveState);
         }
     }
 }

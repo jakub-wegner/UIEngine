@@ -3,6 +3,21 @@ Shader "JakubWegner/UIEngine/Panel"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+
+        _RectSize      ("Rect Size (px)", Vector) = (200, 100, 0, 0)
+        _Size          ("Panel Size (px)", Vector) = (200, 100, 0, 0)
+
+        _FillColor     ("Fill Color", Color) = (0.2, 0.2, 0.2, 1)
+
+        _CornerRadius  ("Corner Radius", Range(0, 100)) = 16
+
+        _EnableBorder ("Enable Border", Float) = 0
+        _BorderColor   ("Border Color", Color) = (1, 1, 1, 1)
+        _BorderSize    ("Border Size", Range(0, 20)) = 2
+
+        _EnableShadow ("Enable Shadow", Float) = 0
+        _ShadowColor   ("Shadow Color", Color) = (0, 0, 0, 0.5)
+        _ShadowOffset  ("Shadow Offset (px)", Vector) = (6, -6, 0, 0)
     }
 
     SubShader
